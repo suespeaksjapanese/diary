@@ -29,10 +29,18 @@
     <main class="max-w-2xl mx-auto px-4 pt-8 space-y-6">
 
         <!-- Top Title Bar -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center space-x-3.5">
                 <i class="fa-solid fa-calendar-check text-amber-300 text-2xl sm:text-3xl"></i>
                 <h1 class="font-extrabold text-slate-700 text-2xl sm:text-3xl tracking-tight">日記チェック表 (20日間)</h1>
+            </div>
+            
+            <!-- Action Button: Save -->
+            <div class="flex items-center justify-end w-full sm:w-auto">
+                <button onclick="manualSave()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-bold rounded-xl text-sm shadow-sm transition-all flex items-center space-x-2">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>保存</span>
+                </button>
             </div>
         </div>
 
@@ -107,8 +115,13 @@
                 </table>
             </div>
         </div>
-
     </main>
+
+    <!-- Custom Toast Alert for Manual Save & Copy Link -->
+    <div id="toast-message" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800/90 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-bold shadow-lg transition-all duration-300 transform opacity-0 translate-y-4 pointer-events-none z-50 flex items-center space-x-2">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-text">保存しました！</span>
+    </div>
 
     <!-- Custom Modal for Reset Confirmation -->
     <div id="reset-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
@@ -117,7 +130,7 @@
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <h3 class="text-lg font-bold text-slate-800 mb-2">記録をリセットしますか？</h3>
-            <p class="text-xs text-slate-500 mb-6">ゆうきさんとひかりさんのすべてのチェック記録が初期化されます。</p>
+            <p class="text-xs text-slate-500 mb-6">勇気さんと光さんのすべてのチェック記録が初期化されます。</p>
             <div class="flex gap-2">
                 <button onclick="closeResetModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-sm transition-colors">
                     キャンセル
@@ -131,6 +144,11 @@
 
     <!-- JavaScript Logic -->
     <script>
+        // Supabase Configuration
+        const SUPABASE_URL = "https://hblyyvxdkmdjwavcsrew.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_xqJoid4LY0yNzLzmhopcEw_ffbRxVzo";
+        const TABLE_NAME = "diary_challenge";
+
         // State
         let state = {
             yuki: Array(20).fill(false),
@@ -144,10 +162,20 @@
             loadLocalStorage();
             renderTracker();
             updateProgress();
+            
+            // Sync with Supabase Cloud on start
+            syncFromSupabase();
+            
+            // Auto-refresh every 5 seconds to sync changes from friend
+            setInterval(syncFromSupabase, 5000);
         });
 
         function saveToStorage() {
-            localStorage.setItem('jp_diary_state', JSON.stringify(state));
+            try {
+                localStorage.setItem('jp_diary_state', JSON.stringify(state));
+            } catch (e) {
+                console.error("Storage save error", e);
+            }
         }
 
         function loadLocalStorage() {
@@ -160,6 +188,70 @@
                 } catch(e) {
                     console.error("Storage load error", e);
                 }
+            }
+        }
+
+        // Supabase Sync Read
+        async function syncFromSupabase() {
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}?id=eq.main_challenge_room&select=*`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0 && data[0].data) {
+                        const cloudData = data[0].data;
+                        let updated = false;
+                        if (JSON.stringify(state.yuki) !== JSON.stringify(cloudData.yuki) ||
+                            JSON.stringify(state.hikari) !== JSON.stringify(cloudData.hikari)) {
+                            state.yuki = cloudData.yuki || Array(20).fill(false);
+                            state.hikari = cloudData.hikari || Array(20).fill(false);
+                            saveToStorage();
+                            renderTracker();
+                            updateProgress();
+                        }
+                    }
+                }
+            } catch (err) {
+                console.log("Cloud sync check (offline/pending)");
+            }
+        }
+
+        // Supabase Sync Write
+        async function saveToSupabase() {
+            try {
+                const payload = {
+                    id: "main_challenge_room",
+                    data: state,
+                    updated_at: new Date().toISOString()
+                };
+
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'resolution=merge-duplicates'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    showToast('クラウドに保存しました！');
+                } else {
+                    saveToStorage();
+                    showToast('ローカルに保存しました！');
+                }
+            } catch (err) {
+                saveToStorage();
+                showToast('ローカルに保存しました！');
             }
         }
 
@@ -212,9 +304,9 @@
                                 </button>
                             </div>
                         </td>
-                        <td class="py-3.5 px-2 text-center align-middle">
-                            <div class="font-extrabold text-slate-800 text-sm sm:text-base">${formattedDate}</div>
-                            <div class="text-xs text-slate-400 font-normal mt-0.5 tracking-tight">${hiraganaReading}</div>
+                        <td class="py-3 px-2 text-center align-middle">
+                            <div class="font-bold text-slate-700 text-sm sm:text-base tracking-wide">${formattedDate}</div>
+                            <div class="text-[11px] font-medium text-slate-400 mt-0.5">${hiraganaReading}</div>
                         </td>
                         <td class="py-3 px-1 text-center align-middle">
                             <div class="flex items-center justify-center w-full">
@@ -227,10 +319,30 @@
                     tbody.appendChild(tr);
                     count++;
                 }
-
-                // Increment Day
                 currentDate.setDate(currentDate.getDate() + 1);
             }
+        }
+
+        // Manual Save Action
+        function manualSave() {
+            saveToStorage();
+            saveToSupabase();
+        }
+
+        // Show Toast Function
+        function showToast(message) {
+            const toast = document.getElementById('toast-message');
+            const toastText = document.getElementById('toast-text');
+            if (!toast || !toastText) return;
+
+            toastText.innerText = message;
+            toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }, 2000);
         }
 
         // Toggle Check status
@@ -239,6 +351,7 @@
             saveToStorage();
             renderTracker();
             updateProgress();
+            saveToSupabase();
         }
 
         // Update Progress Indicators
@@ -279,6 +392,7 @@
             const modal = document.getElementById('reset-modal');
             if (modal) {
                 modal.classList.remove('flex');
+                modal.classList.hidden = true;
                 modal.classList.add('hidden');
             }
         }
