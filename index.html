@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Zen Maru Gothic - Iconic Japanese Rounded Font & Kiwi Maru) -->
+    <!-- Google Fonts (Zen Maru Gothic & Kiwi Maru) -->
     <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Zen+Maru+Gothic:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
         body {
@@ -47,7 +47,7 @@
         <!-- Progress Overview Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             
-            <!-- Yuki's Card (Left: Avatar & Name on Left, Count on Right) -->
+            <!-- Yuki's Card -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-3.5">
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            <!-- Hikari's Card (Right: Count on Left, Avatar & Name on Right - Symmetrical) -->
+            <!-- Hikari's Card -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <div class="flex items-center justify-between mb-4">
                     <span class="text-3xl font-black text-pink-400" id="hikari-count">0 <span class="text-xs text-slate-400 font-normal">/ 20日</span></span>
@@ -77,7 +77,7 @@
                             <p class="text-sm font-medium text-slate-400" id="hikari-percent">達成率 0%</p>
                         </div>
                         <div class="w-12 h-12 rounded-full bg-pink-100/80 text-pink-400 flex items-center justify-center shadow-sm shrink-0">
-                            <!-- Detailed Cherry Blossom SVG (Soft Pastel Pink) -->
+                            <!-- Cherry Blossom SVG -->
                             <svg class="w-8 h-8 text-pink-300 fill-current" viewBox="0 0 24 24">
                                 <path d="M12 12c-1.2-2.5-1.5-4.5-.5-5.5 1.5-1.5 4.5.5 4.5.5s2 3 .5 4.5c-1 1-3 .7-4.5-.5zm0 0c2.5-1.2 4.5-1.5 5.5-.5 1.5 1.5-.5 4.5-.5 4.5s-3 2-4.5.5c-1-1-.7-3 .5-4.5zm0 0c1.2 2.5 1.5 4.5.5 5.5-1.5 1.5-4.5-.5-4.5-.5s-2-3-.5-4.5c1-1 3-.7 4.5.5zm0 0c-2.5 1.2-4.5 1.5-5.5.5-1.5-1.5.5-4.5.5-4.5s3-2 4.5-.5c1 1 .7 3-.5 4.5zm0 0c-1.8-1.8-2.7-3.8-2.2-4.8 1-1.8 4.2-1.2 4.2-1.2s1.8 3.2.2 4.8c-1.1 1.1-1.5.5-2.2 1.2z"/>
                                 <circle cx="12" cy="12" r="1.8" class="text-pink-200 fill-current"/>
@@ -85,7 +85,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Progress Bar (Fills from Right to Left for perfect symmetry) -->
+                <!-- Progress Bar -->
                 <div class="w-full bg-slate-100 rounded-full h-4 overflow-hidden flex justify-end">
                     <div id="hikari-bar" class="bg-gradient-to-l from-pink-200 to-pink-300 h-4 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
                 </div>
@@ -95,18 +95,13 @@
 
         <!-- Main Tracker Table Container -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-            <!-- Table -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse table-fixed">
                     <thead>
                         <tr class="bg-slate-50 text-slate-400 text-sm uppercase tracking-wider border-b border-slate-100">
-                            <th class="py-3.5 px-2 text-center font-bold text-sky-500 w-[22%]">
-                                勇気
-                            </th>
+                            <th class="py-3.5 px-2 text-center font-bold text-sky-500 w-[22%]">勇気</th>
                             <th class="py-3.5 px-2 text-center font-bold text-slate-600 text-base w-[56%]">日付</th>
-                            <th class="py-3.5 px-4 text-center font-bold text-pink-400 w-[22%]">
-                                光
-                            </th>
+                            <th class="py-3.5 px-4 text-center font-bold text-pink-400 w-[22%]">光</th>
                         </tr>
                     </thead>
                     <tbody id="tracker-rows" class="divide-y divide-slate-100 text-base">
@@ -117,29 +112,10 @@
         </div>
     </main>
 
-    <!-- Custom Toast Alert for Manual Save & Copy Link -->
+    <!-- Custom Toast Alert -->
     <div id="toast-message" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800/90 backdrop-blur-md text-white px-5 py-3 rounded-full text-sm font-bold shadow-lg transition-all duration-300 transform opacity-0 translate-y-4 pointer-events-none z-50 flex items-center space-x-2">
         <i class="fa-solid fa-circle-check text-emerald-400"></i>
         <span id="toast-text">保存しました！</span>
-    </div>
-
-    <!-- Custom Modal for Reset Confirmation -->
-    <div id="reset-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl transform transition-all text-center">
-            <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto mb-4 text-xl">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <h3 class="text-lg font-bold text-slate-800 mb-2">記録をリセットしますか？</h3>
-            <p class="text-xs text-slate-500 mb-6">勇気さんと光さんのすべてのチェック記録が初期化されます。</p>
-            <div class="flex gap-2">
-                <button onclick="closeResetModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-sm transition-colors">
-                    キャンセル
-                </button>
-                <button onclick="confirmReset()" class="flex-1 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-sm shadow-md shadow-rose-200 transition-colors">
-                    リセット
-                </button>
-            </div>
-        </div>
     </div>
 
     <!-- JavaScript Logic -->
@@ -157,17 +133,13 @@
 
         const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
 
-        // DOM Loaded Event Listener (Safely initializes script)
         document.addEventListener('DOMContentLoaded', function() {
             loadLocalStorage();
             renderTracker();
             updateProgress();
             
-            // Sync with Supabase Cloud on start
-            syncFromSupabase();
-            
-            // Auto-refresh every 5 seconds to sync changes from friend
-            setInterval(syncFromSupabase, 5000);
+            // Background safe sync (non-blocking)
+            setTimeout(syncFromSupabase, 500);
         });
 
         function saveToStorage() {
@@ -191,8 +163,11 @@
             }
         }
 
-        // Supabase Sync Read
+        // Supabase Sync Read with strict Timeout protection
         async function syncFromSupabase() {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000); // 3초 타임아웃 강제 제한
+
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}?id=eq.main_challenge_room&select=*`, {
                     method: 'GET',
@@ -200,14 +175,15 @@
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`,
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
 
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.length > 0 && data[0].data) {
                         const cloudData = data[0].data;
-                        let updated = false;
                         if (JSON.stringify(state.yuki) !== JSON.stringify(cloudData.yuki) ||
                             JSON.stringify(state.hikari) !== JSON.stringify(cloudData.hikari)) {
                             state.yuki = cloudData.yuki || Array(20).fill(false);
@@ -219,12 +195,19 @@
                     }
                 }
             } catch (err) {
-                console.log("Cloud sync check (offline/pending)");
+                // 타임아웃 또는 네트워크 차단 시 조용히 로컬 모드로 전환 (앱 멈춤 현상 원천 방지)
+                console.log("Cloud sync skipped, using local storage.");
             }
         }
 
-        // Supabase Sync Write
+        // Supabase Sync Write with Timeout protection
         async function saveToSupabase() {
+            saveToStorage(); // 항상 로컬에 먼저 안전하게 저장
+            showToast('保存しました！');
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+
             try {
                 const payload = {
                     id: "main_challenge_room",
@@ -232,7 +215,7 @@
                     updated_at: new Date().toISOString()
                 };
 
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}`, {
+                await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}`, {
                     method: 'POST',
                     headers: {
                         'apikey': SUPABASE_KEY,
@@ -240,18 +223,13 @@
                         'Content-Type': 'application/json',
                         'Prefer': 'resolution=merge-duplicates'
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
                 });
-
-                if (response.ok) {
-                    showToast('クラウドに保存しました！');
-                } else {
-                    saveToStorage();
-                    showToast('ローカルに保存しました！');
-                }
+                clearTimeout(timeoutId);
             } catch (err) {
-                saveToStorage();
-                showToast('ローカルに保存しました！');
+                // 네트워크 지연으로 인한 타임아웃 발생 시에도 UI는 정상 작동 유지
+                console.log("Background cloud save deferred.");
             }
         }
 
@@ -262,12 +240,10 @@
 
             tbody.innerHTML = '';
 
-            // Start Date: Nov 5th (Nov is month 10 in JS 0-indexed Date)
             const currentYear = new Date().getFullYear();
             let currentDate = new Date(currentYear, 10, 5); 
             let count = 0;
 
-            // Hiragana readings lookup helper
             const monthKana = ['いちがつ', 'にがつ', 'さんがつ', 'しがつ', 'ごがつ', 'ろくがつ', 'しちがつ', 'はちがつ', 'くがつ', 'じゅうがつ', 'じゅういちがつ', 'じゅうにがつ'];
             const dateKana = {
                 1: 'ついたち', 2: 'ふつか', 3: 'みっか', 4: 'よっか', 5: 'いつか',
@@ -275,22 +251,19 @@
                 11: 'じゅういちにち', 12: 'じゅうににち', 13: 'じゅうさんにち', 14: 'じゅうよっか', 15: 'じゅうごにち',
                 16: 'じゅうろくにち', 17: 'じゅうしちにち', 18: 'じゅうはちにち', 19: 'じゅうくにし', 20: 'はつか',
                 21: 'にじゅういちにち', 22: 'にじゅうににち', 23: 'にじゅうさんにち', 24: 'にじゅうよっか', 25: 'にじゅうごにち',
-                26: 'にじゅうろくにち', 27: 'にじゅうしちにち', 28: 'にじゅうはちにち', 29: 'にじゅうくにち', 30: 'さんじゅうにち', 31: 'さんじゅういちにち'
+                26: 'にじゅうろくにち', 27: 'にじゅうしちにち', 28: 'にじゅうはちにち', 29: 'じゅうくにち', 30: 'さんじゅうにち', 31: 'さんじゅういちにち'
             };
             const dayKana = ['にち', 'げつ', 'か', 'すい', 'もく', 'きん', 'ど'];
 
             while (count < 20) {
-                const dayOfWeekNum = currentDate.getDay(); // 0: Sun, 6: Sat
+                const dayOfWeekNum = currentDate.getDay();
                 
-                // Exclude weekends (Saturday & Sunday)
                 if (dayOfWeekNum !== 0 && dayOfWeekNum !== 6) {
                     const index = count;
                     const month = currentDate.getMonth() + 1;
                     const date = currentDate.getDate();
                     const dayOfWeek = dayNames[dayOfWeekNum];
                     const formattedDate = `${month}月${date}日 (${dayOfWeek})`;
-
-                    // Generate Hiragana reading
                     const hiraganaReading = `${monthKana[month - 1]} ${dateKana[date]} (${dayKana[dayOfWeekNum]})`;
 
                     const tr = document.createElement('tr');
@@ -323,13 +296,10 @@
             }
         }
 
-        // Manual Save Action
         function manualSave() {
-            saveToStorage();
             saveToSupabase();
         }
 
-        // Show Toast Function
         function showToast(message) {
             const toast = document.getElementById('toast-message');
             const toastText = document.getElementById('toast-text');
@@ -345,16 +315,13 @@
             }, 2000);
         }
 
-        // Toggle Check status
         function toggleCheck(user, index) {
             state[user][index] = !state[user][index];
-            saveToStorage();
             renderTracker();
             updateProgress();
             saveToSupabase();
         }
 
-        // Update Progress Indicators
         function updateProgress() {
             const yukiCount = state.yuki.filter(Boolean).length;
             const hikariCount = state.hikari.filter(Boolean).length;
@@ -377,33 +344,6 @@
             if (hikariCountEl) hikariCountEl.innerHTML = `${hikariCount} <span class="text-xs text-slate-400 font-normal">/ 20日</span>`;
             if (hikariBarEl) hikariBarEl.style.width = `${hikariPercent}%`;
             if (hikariPercentEl) hikariPercentEl.innerText = `達成率 ${hikariPercent}%`;
-        }
-
-        // Custom Modal Reset Handlers
-        function openResetModal() {
-            const modal = document.getElementById('reset-modal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }
-        }
-
-        function closeResetModal() {
-            const modal = document.getElementById('reset-modal');
-            if (modal) {
-                modal.classList.remove('flex');
-                modal.classList.hidden = true;
-                modal.classList.add('hidden');
-            }
-        }
-
-        function confirmReset() {
-            state.yuki = Array(20).fill(false);
-            state.hikari = Array(20).fill(false);
-            saveToStorage();
-            renderTracker();
-            updateProgress();
-            closeResetModal();
         }
     </script>
 </body>
